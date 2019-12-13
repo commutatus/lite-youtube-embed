@@ -17,6 +17,7 @@ class LiteYTEmbed extends HTMLElement {
         // Gotta encode the untrusted value
         // https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html#rule-2---attribute-escape-before-inserting-untrusted-data-into-html-common-attributes
         this.videoId = encodeURIComponent(this.getAttribute('videoid'));
+        this.rel = encodeURIComponent(this.getAttribute('rel'));
 
         /**
          * Lo, the youtube placeholder image!  (aka the thumbnail, poster image, etc)
@@ -99,10 +100,15 @@ class LiteYTEmbed extends HTMLElement {
     }
 
     addIframe(){
+        let videoUrlWithQuery = `${this.videoId}?autoplay=1`;
+        if (this.rel && this.rel !== 'null') {
+            videoUrlWithQuery+=`&rel=${this.rel}`;
+        }
+
         const iframeHTML = `
 <iframe width="560" height="315" frameborder="0"
   allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen
-  src="https://www.youtube.com/embed/${this.videoId}?autoplay=1"
+  src="https://www.youtube.com/embed/${videoUrlWithQuery}"
 ></iframe>`;
         this.insertAdjacentHTML('beforeend', iframeHTML);
         this.classList.add('lyt-activated');
